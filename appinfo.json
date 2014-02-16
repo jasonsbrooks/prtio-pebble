@@ -1,0 +1,30 @@
+{
+  "uuid": "808EA0EE-03A0-448D-B8DB-DC45CE6F2FD8",
+  "shortName": "prtio",
+  "longName": "prtio",
+  "companyName": "prtio",
+  "versionCode": 2,
+  "versionLabel": "2.0.0",
+  "watchapp": {
+    "watchface": false
+  },
+  "appKeys": {
+    "song": 0,
+    "artist": 1,
+    "fetch" : 2
+  },
+  "resources": {
+    "media": [
+      {
+        "type": "png",
+        "name": "IMAGE_CHECK",
+        "file": "img/check.png"
+      },
+      {
+        "type": "png",
+        "name": "IMAGE_VETO",
+        "file": "img/veto.png"
+      }
+    ]
+  }
+}
