@@ -124,13 +124,13 @@ static void in_received_handler(DictionaryIterator *iter, void *context) {
   if (song_tuple) {
     strncpy(song, song_tuple->value->cstring, 50);
     text_layer_set_text(song_layer, song);
-    APP_LOG(APP_LOG_LEVEL_DEBUG, "Song tuple! %s", artist);
+    // APP_LOG(APP_LOG_LEVEL_DEBUG, "Song tuple! %s", artist);
 
   }
   if (artist_tuple) {
     strncpy(artist, artist_tuple->value->cstring, 50);
     text_layer_set_text(artist_layer, artist);
-    APP_LOG(APP_LOG_LEVEL_DEBUG, "Artist tuple! %s", artist);
+    // APP_LOG(APP_LOG_LEVEL_DEBUG, "Artist tuple! %s", artist);
 
 
   }

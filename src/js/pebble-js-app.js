@@ -5,8 +5,13 @@ var allSongs = [];
 
 var outgoing = {};
 
-var url = "http://4532aa04.ngrok.com";
+var API_URL = "http://prtio.com";
+// var API_URL = "http://prtio.herokuapp.com";
+// var API_URL = "http://7705977c.ngrok.com";
+var MY_PARTY_KEY = "pennapps";
 
+var ACTION_APPROVE = "approved";
+var ACTION_DENY = "denied";
 
 // setInterval(fetchSongInfo,10000);
 
@@ -59,23 +64,23 @@ var url = "http://4532aa04.ngrok.com";
   var response;
   var req = new XMLHttpRequest();
   // build the GET request
-  req.setRequestHeader("X-Parse-Application-Id", "sXIk77EAWSgkshjxgdIi8IoxQq3rbnmtYxwxQUVh");
-  req.setRequestHeader("X-Parse-REST-API-Key", "2FWetS0DFSM4b0znuXmEECgc0UuKLpKiZEzEtBmR");
+  // req.setRequestHeader("X-Parse-Application-Id", "sXIk77EAWSgkshjxgdIi8IoxQq3rbnmtYxwxQUVh");
+  // req.setRequestHeader("X-Parse-REST-API-Key", "2FWetS0DFSM4b0znuXmEECgc0UuKLpKiZEzEtBmR");
   req.setRequestHeader("Content-Type", "application/json");
 
-  req.open('POST', "https://api.parse.com/1/functions/getSongs", true);
-  var data = {};
+  req.open('POST', API_URL + "/party/get_pending" , true);
+  var data = {"partykey" : MY_PARTY_KEY};
   req.onload = function(e) {
     if (req.readyState == 4) {
       // 200 - HTTP OK
       if(req.status == 200) {
+        console.log(req.responseText);
         response = JSON.parse(req.responseText);
-
         if (response) {
           // data found, look for LastPrice
 
-          if (response.result.length > 0)
-            allSongs = JSON.parse(response.result);
+          if (response.length > 0)
+            allSongs = response;
             updateSongs();
         }
       } else {
@@ -87,101 +92,41 @@ var url = "http://4532aa04.ngrok.com";
   req.send(JSON.stringify(data));
 }
 
-function sendPostRequest1(endpoint, id) {
+function sendPostRequest(id, action) {
   var response;
   var req = new XMLHttpRequest();
   // build the GET request
-  req.setRequestHeader("X-Parse-Application-Id", "sXIk77EAWSgkshjxgdIi8IoxQq3rbnmtYxwxQUVh");
-  req.setRequestHeader("X-Parse-REST-API-Key", "2FWetS0DFSM4b0znuXmEECgc0UuKLpKiZEzEtBmR");
+  // req.setRequestHeader("X-Parse-Application-Id", "sXIk77EAWSgkshjxgdIi8IoxQq3rbnmtYxwxQUVh");
+  // req.setRequestHeader("X-Parse-REST-API-Key", "2FWetS0DFSM4b0znuXmEECgc0UuKLpKiZEzEtBmR");
   req.setRequestHeader("Content-Type", "application/json");
   var data = {
-    "title" : "When You Were Young",
-    'artist': "The Killers",
-    "id" : '1235323432'
+    "id" : id,
+    "action" : action
   };
 
-  req.open('POST', "http://5634aa3e.ngrok.com/add", true);
+  req.open('POST', API_URL + "/party/approval", true);
   req.onload = function(e) {
     if (req.readyState == 4) {
       // 200 - HTTP OK
       if(req.status == 200) {
-        response = JSON.parse(req.responseText);
+        console.log(req.responseText);
+        // response = JSON.parse(req.responseText);
         console.log("Post Successful!");
 
-        console.log("data is : " + response);
-        /*var song;
-        var artist;
-
-        if (response) {
-          // data found, look for LastPrice
-          song = response.data.title;
-          artist = response.data.artist;
-
-          Pebble.sendAppMessage({
-            "song": song,
-            "artist" : artist
-          });
-        }  else{
-          // the merkitondemand API sends a response with a Message
-          // field when the symbol is not found
-          // Pebble.sendAppMessage({
-          //   "price": "Not Found"});
-         }
-         */
-         popAndUpdate();
+        // if (response.success != "true") {
+        //   // data found, look for LastPrice
+        //   console.log("Re-adding item after failure.");
+        //   allSongs.unshift(outgoing[id]);
+        //   delete outgoing[id];
+        // }
       } else {
         console.log("Request returned error code " + req.status.toString());
       }
     }
   };
 
-  req.send(JSON.stringify(data));
-}
+  popAndUpdate();
 
-function sendPostRequest(endpoint, id) {
-  var response;
-  var req = new XMLHttpRequest();
-  // build the GET request
-  req.setRequestHeader("X-Parse-Application-Id", "sXIk77EAWSgkshjxgdIi8IoxQq3rbnmtYxwxQUVh");
-  req.setRequestHeader("X-Parse-REST-API-Key", "2FWetS0DFSM4b0znuXmEECgc0UuKLpKiZEzEtBmR");
-  req.setRequestHeader("Content-Type", "application/json");
-  var data = {
-    'id': id,
-  };
-
-  req.open('POST', "https://api.parse.com/1/functions/" + endpoint, true);
-  req.onload = function(e) {
-    if (req.readyState == 4) {
-      // 200 - HTTP OK
-      if(req.status == 200) {
-        response = JSON.parse(req.responseText);
-        console.log("Post Successful!");
-        // console.log("data is : " + response);
-        /*var song;
-        var artist;
-
-        if (response) {
-          // data found, look for LastPrice
-          song = response.data.title;
-          artist = response.data.artist;
-
-          Pebble.sendAppMessage({
-            "song": song,
-            "artist" : artist
-          });
-        }  else{
-          // the merkitondemand API sends a response with a Message
-          // field when the symbol is not found
-          // Pebble.sendAppMessage({
-          //   "price": "Not Found"});
-         }
-         */
-         popAndUpdate();
-      } else {
-        console.log("Request returned error code " + req.status.toString());
-      }
-    }
-  };
 
   req.send(JSON.stringify(data));
 }
@@ -202,11 +147,14 @@ Pebble.addEventListener("appmessage",
                           }
                           else if (e.payload.fetch == 2) {
                             console.log("UP BUTTON PRESSED");
-                            sendPostRequest("approve", "123");
+                            if(allSongs.length > 0) {
+                              sendPostRequest(allSongs[0].id, ACTION_APPROVE);
+                            }
                           }
                           else if (e.payload.fetch == 3) {
                               console.log("DOWN BUTTON PRESSED");
-                              sendPostRequest("deny", "123");
+                              if(allSongs.length > 0)
+                                sendPostRequest( allSongs[0].id, ACTION_DENY);
                           }
                         });
 
